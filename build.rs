@@ -30,13 +30,13 @@ fn build_manifest() {
         res.set_icon("res/icon.ico")
             .set("FileDescription", "Zillner IT Remote")
             .set("ProductName", "Zillner IT Remote")
-            .set("CompanyName", "Zillner IT")
+            .set("CompanyName", "Zillner IT, Hauzenberg, Deutschland")
             .set("InternalName", "ZillnerITRemote")
             .set("OriginalFilename", "ZillnerITRemote.exe")
-            .set("LegalCopyright", "Copyright (c) 2026 Zillner IT. All rights reserved.")
+            .set("LegalCopyright", "Copyright (c) 2026 Zillner IT, Deutschland. All rights reserved.")
             .set_language(winapi::um::winnt::MAKELANGID(
-                winapi::um::winnt::LANG_ENGLISH,
-                winapi::um::winnt::SUBLANG_ENGLISH_US,
+                winapi::um::winnt::LANG_GERMAN,
+                winapi::um::winnt::SUBLANG_GERMAN,
             ))
             .set_manifest_file("res/manifest.xml");
         match res.compile() {
