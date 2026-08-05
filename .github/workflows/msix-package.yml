@@ -1,0 +1,45 @@
+name: Package MSIX for Microsoft Store
+
+# Manual trigger only. Run this AFTER a successful "Flutter Nightly Build" run,
+# once you have the Windows x64 unsigned artifact available.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run ID of the 'Flutter Nightly Build' workflow to pull the windows-x64 artifact from"
+        required: true
+        type: string
+
+jobs:
+  package-msix:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        # No submodules needed here - we are not compiling anything,
+        # just packaging an already-built Windows release folder.
+
+      - name: Install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Download built Windows release (unsigned)
+        uses: actions/download-artifact@v4
+        with:
+          name: rustdesk-unsigned-windows-x86_64
+          path: flutter/build/windows/x64/runner/Release
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get msix dependency and package
+        working-directory: flutter
+        run: |
+          flutter pub get
+          flutter pub run msix:create
+
+      - name: Upload MSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZillnerITRemote-msix
+          path: flutter/*.msix

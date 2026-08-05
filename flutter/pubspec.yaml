@@ -119,6 +119,7 @@ dev_dependencies:
   freezed: ^2.4.2
   flutter_lints: ^2.0.2
   ffigen: ^8.0.2
+  msix: ^3.16.7
 
 dependency_overrides:
   intl: ^0.19.0
@@ -138,6 +139,24 @@ flutter_icons:
   linux: true
   web:
     generate: true
+
+# MSIX packaging for Microsoft Store submission.
+# Build with: flutter pub run msix:create
+# NOTE: replace publisher/identity-name/publisher-display-name with the
+# exact values shown in your Partner Center app identity page once the
+# app reservation is created there - they must match exactly or the
+# Store submission will be rejected.
+msix_config:
+  display_name: Zillner IT Remote
+  publisher_display_name: Zillner IT
+  identity_name: ZillnerIT.ZillnerITRemote
+  publisher: CN=0000000-0000-0000-0000-000000000000
+  msix_version: 1.4.9.0
+  logo_path: ../res/icon.png
+  capabilities: internetClient, internetClientServer, privateNetworkClientServer
+  languages: de-de, en-us
+  app_installer:
+    publish_folder_path: msix_release
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
