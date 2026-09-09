@@ -56,6 +56,7 @@ final isWindows = isWindows_;
 final isMacOS = isMacOS_;
 final isLinux = isLinux_;
 final isDesktop = isDesktop_;
+final exeFileName = exeFileName_;
 final isWeb = isWeb_;
 final isWebDesktop = isWebDesktop_;
 final isWebOnWindows = isWebOnWindows_;
@@ -3764,10 +3765,29 @@ const _kDefaultLogoAsset = 'assets/logo.png';
 const _kLightLogoAsset = 'assets/logo_light.png';
 const _kDarkLogoAsset = 'assets/logo_dark.png';
 
+// Reseller/white-label support: the same build is shipped to every partner
+// under a different exe name (e.g. "IT Gumminger Remote.exe"), and we pick a
+// matching logo asset if one was bundled for that name. Falls through to the
+// generic default logo when no partner-specific asset exists, so this is a
+// no-op for the standard build.
+String? _partnerLogoSlug() {
+  if (exeFileName.isEmpty) return null;
+  final stem = exeFileName.toLowerCase().replaceAll('.exe', '');
+  final slug = stem.replaceAll(RegExp(r'[^a-z0-9]+'), '_').replaceAll(RegExp(r'^_+|_+$'), '');
+  return slug.isEmpty ? null : slug;
+}
+
 List<String> _logoAssetCandidatesForBrightness(Brightness brightness) {
-  return brightness == Brightness.dark
-      ? [_kDarkLogoAsset, _kDefaultLogoAsset]
-      : [_kLightLogoAsset, _kDefaultLogoAsset];
+  final isDark = brightness == Brightness.dark;
+  final slug = _partnerLogoSlug();
+  final List<String> candidates = [];
+  if (slug != null) {
+    candidates.add('assets/logo_${slug}_${isDark ? "dark" : "light"}.png');
+    candidates.add('assets/logo_$slug.png');
+  }
+  candidates.addAll(
+      isDark ? [_kDarkLogoAsset, _kDefaultLogoAsset] : [_kLightLogoAsset, _kDefaultLogoAsset]);
+  return candidates;
 }
 
 Future<String?> _resolveLogoAsset(Brightness brightness) async {

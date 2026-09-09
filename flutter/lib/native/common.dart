@@ -15,3 +15,8 @@ String get screenInfo_ => '';
 final isWebOnWindows_ = false;
 final isWebOnLinux_ = false;
 final isWebOnMacOS_ = false;
+
+// Used to pick a partner/reseller-specific logo at runtime: the same build is
+// shipped to every partner, renamed to e.g. "IT Gumminger Remote.exe", and the
+// UI looks up a logo asset matching this name instead of the generic default.
+final exeFileName_ = Platform.resolvedExecutable.split(RegExp(r'[\\/]')).last;
