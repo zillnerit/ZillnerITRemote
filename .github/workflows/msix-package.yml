@@ -38,8 +38,14 @@ jobs:
           flutter pub get
           flutter pub run msix:create --build-windows=false --install-certificate false
 
+      - name: List produced msix files (diagnostic)
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path flutter -Recurse -Filter *.msix | Select-Object FullName
+
       - name: Upload MSIX
         uses: actions/upload-artifact@v4
         with:
           name: ZillnerITRemote-msix
-          path: flutter/*.msix
+          path: flutter/**/*.msix
+          if-no-files-found: error
