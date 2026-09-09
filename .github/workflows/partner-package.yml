@@ -1,0 +1,70 @@
+name: Package Partner Installer
+
+# Reuses an already-built "Flutter Nightly Build" Windows release and repacks
+# it as a self-extracting installer under a different exe name, so a partner
+# gets their own branded installer without a full separate compile. The app
+# itself already picks the matching logo based on this exe name at runtime
+# (see flutter/lib/common.dart).
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run ID of the 'Flutter Nightly Build' workflow to pull the windows-x64 artifact from"
+        required: true
+        type: string
+      partner_exe_name:
+        description: 'Exe name for this partner, without .exe (e.g. "IT Gumminger Remote")'
+        required: true
+        type: string
+      output_name:
+        description: "Filename for the produced installer (e.g. ITGummingerRemote-windows.exe)"
+        required: true
+        type: string
+
+jobs:
+  package-partner:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Download built Windows release (unsigned)
+        uses: actions/download-artifact@v4
+        with:
+          name: rustdesk-unsigned-windows-x86_64
+          path: release
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename exe to partner name
+        shell: pwsh
+        run: |
+          Rename-Item -Path "release\rustdesk.exe" -NewName "${{ inputs.partner_exe_name }}.exe"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install packer Python deps
+        run: pip install brotli
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Repack as self-extracting installer
+        working-directory: libs/portable
+        run: |
+          python3 generate.py -f ..\..\release -o . -e "${{ inputs.partner_exe_name }}.exe"
+
+      - name: Move output
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path SignOutput | Out-Null
+          Move-Item -Path "libs\portable\target\release\rustdesk-portable-packer.exe" -Destination "SignOutput\${{ inputs.output_name }}"
+
+      - name: Upload partner installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: partner-installer
+          path: SignOutput/${{ inputs.output_name }}
