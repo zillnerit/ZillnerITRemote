@@ -150,7 +150,7 @@ msix_config:
   display_name: Zillner IT Remote
   publisher_display_name: Zillner IT
   identity_name: ZillnerIT.ZillnerITRemote
-  publisher: CN=EB4B9202-FC2F-4939-B8BB-E6467C168A9
+  publisher: CN=EB4B9202-FC2F-4939-B8BB-E64674C168A9
   msix_version: 1.4.9.0
   logo_path: ../res/icon.png
   capabilities: internetClient, internetClientServer, privateNetworkClientServer
