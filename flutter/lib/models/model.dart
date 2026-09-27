@@ -41,6 +41,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:vector_math/vector_math.dart' show Vector2;
 
 import '../common.dart';
+import '../desktop/widgets/tabbar_widget.dart';
 import '../utils/image.dart' as img;
 import '../common/widgets/dialog.dart';
 import 'input_model.dart';
@@ -1139,6 +1140,17 @@ class FfiModel with ChangeNotifier {
         final target = '$peerId@public';
         if (isDesktop) {
           await connect(context, target);
+          // The new tab is added asynchronously (via the main window), often
+          // into this same window. Wait until it exists before closing the
+          // failed tab, otherwise closing the last tab tears down the window
+          // while the new session is being created.
+          final controller = Get.find<DesktopTabController>();
+          for (var i = 0; i < 50; i++) {
+            if (controller.state.value.tabs.any((t) => t.key == target)) {
+              break;
+            }
+            await Future.delayed(const Duration(milliseconds: 100));
+          }
           closeConnection(id: peerId);
         } else {
           closeConnection();
