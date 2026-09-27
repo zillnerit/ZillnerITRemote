@@ -30,10 +30,10 @@ fn build_manifest() {
         res.set_icon("res/icon.ico")
             .set("FileDescription", "IT Gumminger Remote")
             .set("ProductName", "IT Gumminger Remote")
-            .set("CompanyName", "IT Gumminger")
+            .set("CompanyName", "IT-Gumminger, Ringelai, Deutschland")
             .set("InternalName", "ITGummingerRemote")
             .set("OriginalFilename", "ITGummingerRemote.exe")
-            .set("LegalCopyright", "Copyright (c) 2026 IT Gumminger. All rights reserved.")
+            .set("LegalCopyright", "Copyright (c) 2026 IT-Gumminger, Deutschland. All rights reserved.")
             .set_language(winapi::um::winnt::MAKELANGID(
                 winapi::um::winnt::LANG_GERMAN,
                 winapi::um::winnt::SUBLANG_GERMAN,

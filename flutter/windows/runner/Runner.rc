@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "IT Gumminger" "\0"
+            VALUE "CompanyName", "IT-Gumminger, Ringelai, Deutschland" "\0"
             VALUE "FileDescription", "IT Gumminger Remote" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "itgummingerremote" "\0"
-            VALUE "LegalCopyright", "Copyright (c) 2026 IT Gumminger. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (c) 2026 IT-Gumminger, Deutschland. All rights reserved." "\0"
             VALUE "OriginalFilename", "ITGummingerRemote.exe" "\0"
             VALUE "ProductName", "IT Gumminger Remote" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
