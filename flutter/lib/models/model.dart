@@ -1009,7 +1009,7 @@ class FfiModel with ChangeNotifier {
       } else {
         final elapsed =
             DateTime.now().difference(_offlineReconnectStartTime!).inSeconds;
-        if (elapsed < 30) {
+        if (elapsed < 180) {
           return true;
         }
       }
@@ -1083,7 +1083,7 @@ class FfiModel with ChangeNotifier {
       _timer = Timer(Duration(seconds: _reconnects), () {
         reconnect(dialogManager, sessionId, false);
       });
-      _reconnects *= 2;
+      _reconnects = _reconnects >= 8 ? 8 : _reconnects * 2;
     } else {
       _reconnects = 1;
       _offlineReconnectStartTime = null;
