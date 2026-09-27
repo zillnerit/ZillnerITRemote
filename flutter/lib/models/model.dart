@@ -963,6 +963,10 @@ class FfiModel with ChangeNotifier {
       showWaitUacDialog(sessionId, dialogManager, type);
     } else if (type == 'elevation-error') {
       showElevationError(sessionId, type, title, text, dialogManager);
+    } else if (text == 'ID does not exist' &&
+        !peerId.contains('@') &&
+        !isWeb) {
+      showIdNotExistDialog(sessionId, type, title, text, dialogManager, peerId);
     } else if (type == 'relay-hint' || type == 'relay-hint2') {
       showRelayHintDialog(sessionId, type, title, text, dialogManager, peerId);
     } else if (text == kMsgboxTextWaitingForImage) {
@@ -1111,6 +1115,43 @@ class FfiModel with ChangeNotifier {
     dialogManager.dismissAll();
     dialogManager.showLoading(translate('Connecting...'),
         onCancel: closeConnection);
+  }
+
+  // Offer to retry an unknown ID via the public RustDesk server ("<id>@public").
+  // Deliberately a manual choice: IDs are only unique per server, so a typo
+  // could otherwise reach an unrelated device on the public server.
+  void showIdNotExistDialog(SessionID sessionId, String type, String title,
+      String text, OverlayDialogManager dialogManager, String peerId) {
+    const hint =
+        '\n\nDiese ID ist auf unserem Server nicht bekannt. Sie k\u00f6nnen es '
+        '\u00fcber den \u00f6ffentlichen RustDesk-Server versuchen. Die Verbindung '
+        'l\u00e4uft dann nicht \u00fcber unsere eigene Infrastruktur. Bitte die ID '
+        'vorher genau pr\u00fcfen.';
+    dialogManager.show(tag: '$sessionId-$type-idnotexist',
+        (setState, close, context) {
+      onClose() {
+        closeConnection();
+        close();
+      }
+
+      onPublic() {
+        close();
+        connect(context, '$peerId@public');
+        closeConnection();
+      }
+
+      return CustomAlertDialog(
+        title: null,
+        content: msgboxContent(type, title, '${translate(text)}$hint'),
+        actions: [
+          dialogButton('Close', onPressed: onClose, isOutline: true),
+          dialogButton(
+              '\u00d6ffentlichen RustDesk-Server versuchen',
+              onPressed: onPublic),
+        ],
+        onCancel: onClose,
+      );
+    });
   }
 
   Future<void> showRelayHintDialog(
