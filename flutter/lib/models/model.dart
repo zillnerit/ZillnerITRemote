@@ -1124,7 +1124,7 @@ class FfiModel with ChangeNotifier {
       String text, OverlayDialogManager dialogManager, String peerId) {
     const hint =
         '\n\nDiese ID ist auf unserem Server nicht bekannt. Sie k\u00f6nnen es '
-        '\u00fcber den \u00f6ffentlichen RustDesk-Server versuchen. Die Verbindung '
+        '\u00fcber den \u00f6ffentlichen Rust\u2060Desk-Server versuchen. Die Verbindung '
         'l\u00e4uft dann nicht \u00fcber unsere eigene Infrastruktur. Bitte die ID '
         'vorher genau pr\u00fcfen.';
     dialogManager.show(tag: '$sessionId-$type-idnotexist',
@@ -1134,10 +1134,18 @@ class FfiModel with ChangeNotifier {
         close();
       }
 
-      onPublic() {
+      onPublic() async {
         close();
-        connect(context, '$peerId@public');
-        closeConnection();
+        final target = '$peerId@public';
+        if (isDesktop) {
+          await connect(context, target);
+          closeConnection(id: peerId);
+        } else {
+          closeConnection();
+          await Future.delayed(const Duration(milliseconds: 300));
+          final ctx = globalKey.currentContext;
+          if (ctx != null) connect(ctx, target);
+        }
       }
 
       return CustomAlertDialog(
@@ -1146,7 +1154,7 @@ class FfiModel with ChangeNotifier {
         actions: [
           dialogButton('Close', onPressed: onClose, isOutline: true),
           dialogButton(
-              '\u00d6ffentlichen RustDesk-Server versuchen',
+              '\u00d6ffentlichen Rust\u2060Desk-Server versuchen',
               onPressed: onPublic),
         ],
         onCancel: onClose,
