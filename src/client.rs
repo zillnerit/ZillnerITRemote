@@ -175,6 +175,10 @@ lazy_static::lazy_static! {
 }
 
 const PUBLIC_SERVER: &str = "public";
+// Official public RustDesk server for "<id>@public". RENDEZVOUS_SERVERS and
+// RS_PUB_KEY point to our own server in this build, so they can't be used here.
+const PUBLIC_RS_HOST: &str = "rs-ny.rustdesk.com";
+const PUBLIC_RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub fn get_key_state(key: enigo::Key) -> bool {
@@ -296,11 +300,8 @@ impl Client {
         } else {
             if other_server == PUBLIC_SERVER {
                 (
-                    check_port(RENDEZVOUS_SERVERS[0], RENDEZVOUS_PORT),
-                    RENDEZVOUS_SERVERS[1..]
-                        .iter()
-                        .map(|x| x.to_string())
-                        .collect(),
+                    check_port(PUBLIC_RS_HOST, RENDEZVOUS_PORT),
+                    Vec::new(),
                     true,
                 )
             } else {
@@ -1803,7 +1804,7 @@ impl LoginConfigHandler {
             let server = server_key.next().unwrap_or_default();
             let args = server_key.next().unwrap_or_default();
             let key = if server == PUBLIC_SERVER {
-                config::RS_PUB_KEY.to_owned()
+                PUBLIC_RS_PUB_KEY.to_owned()
             } else {
                 let mut args_map: HashMap<String, &str> = HashMap::new();
                 for arg in args.split('&') {
