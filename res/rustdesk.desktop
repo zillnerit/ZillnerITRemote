@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Zillner IT Remote
+Name=IT Gumminger Remote
 GenericName=Remote Desktop
-Comment=Zillner IT Remote Desktop
+Comment=IT Gumminger Remote Desktop
 Exec=rustdesk %u
 Icon=rustdesk
 Terminal=false

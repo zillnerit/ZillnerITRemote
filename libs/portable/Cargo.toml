@@ -27,9 +27,9 @@ native-windows-gui = {version = "1.0", default-features = false, features = ["an
 
 [package.metadata.winres]
 LegalCopyright = "Copyright © 2026 Purslane Tech Pte. Ltd. All rights reserved."
-ProductName = "Zillner IT Remote"
-OriginalFilename = "ZillnerITRemote.exe"
-FileDescription = "Zillner IT Remote"
+ProductName = "IT Gumminger Remote"
+OriginalFilename = "ITGummingerRemote.exe"
+FileDescription = "IT Gumminger Remote"
 #ProductVersion = ""
 
 [target.'cfg(target_os="windows")'.build-dependencies]

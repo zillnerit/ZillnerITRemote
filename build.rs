@@ -28,12 +28,12 @@ fn build_manifest() {
     if std::env::var("PROFILE").unwrap() == "release" {
         let mut res = winres::WindowsResource::new();
         res.set_icon("res/icon.ico")
-            .set("FileDescription", "Zillner IT Remote")
-            .set("ProductName", "Zillner IT Remote")
-            .set("CompanyName", "Zillner IT, Hauzenberg, Deutschland")
-            .set("InternalName", "ZillnerITRemote")
-            .set("OriginalFilename", "ZillnerITRemote.exe")
-            .set("LegalCopyright", "Copyright (c) 2026 Zillner IT, Deutschland. All rights reserved.")
+            .set("FileDescription", "IT Gumminger Remote")
+            .set("ProductName", "IT Gumminger Remote")
+            .set("CompanyName", "IT Gumminger")
+            .set("InternalName", "ITGummingerRemote")
+            .set("OriginalFilename", "ITGummingerRemote.exe")
+            .set("LegalCopyright", "Copyright (c) 2026 IT Gumminger. All rights reserved.")
             .set_language(winapi::um::winnt::MAKELANGID(
                 winapi::um::winnt::LANG_GERMAN,
                 winapi::um::winnt::SUBLANG_GERMAN,
