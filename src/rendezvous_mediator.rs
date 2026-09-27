@@ -235,6 +235,11 @@ impl RendezvousMediator {
         let mut last_dns_check = Instant::now();
         let mut old_latency = 0;
         let mut ema_latency = 0;
+        // WebSocket fallback: if UDP registration gets no answer for too long
+        // (e.g. UDP blocked by a firewall), switch to WSS/443 for this session.
+        let udp_started = Instant::now();
+        const WS_FALLBACK_FIRST_MS: u128 = 20_000;
+        const WS_FALLBACK_LOST_MS: u128 = (REG_INTERVAL as u128) * 3;
         loop {
             let mut update_latency = || {
                 last_register_resp = Some(Instant::now());
@@ -290,6 +295,13 @@ impl RendezvousMediator {
                     // until the operator runs `rustdesk --deploy`.
                     if deploy_register_throttled().await {
                         continue;
+                    }
+                    let silent_ms = last_register_resp.unwrap_or(udp_started).elapsed().as_millis();
+                    let limit_ms = if last_register_resp.is_none() { WS_FALLBACK_FIRST_MS } else { WS_FALLBACK_LOST_MS };
+                    if silent_ms > limit_ms {
+                        log::warn!("No UDP registration answer from {} for {}ms, falling back to WebSocket", host, silent_ms);
+                        hbb_common::config::WS_FALLBACK.store(true, Ordering::SeqCst);
+                        bail!("UDP registration timeout, switching to WebSocket");
                     }
                     let now = Some(Instant::now());
                     let expired = last_register_resp.map(|x| x.elapsed().as_millis() as i64 >= REG_INTERVAL).unwrap_or(true);
