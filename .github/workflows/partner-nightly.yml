@@ -1,0 +1,23 @@
+name: Partner Nightly Trigger
+
+# Zeitplaene laufen nur auf master. Dieser Workflow startet deshalb jede Nacht
+# den normalen Nightly-Build auf den Partner-Zweigen.
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [partner/gumminger]
+    steps:
+      - name: Nightly-Build fuer ${{ matrix.branch }} starten
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run flutter-nightly.yml --repo "$GITHUB_REPOSITORY" --ref "${{ matrix.branch }}"
